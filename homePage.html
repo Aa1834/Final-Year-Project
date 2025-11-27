@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+
+        <form>
+            
+        </form>
+
+        <script type="module">
+        import { getUserProfile } from './users.js';
+        
+        getUserProfile(({ user, role, profile }) => {
+            if (!user) {
+                // not signed in - redirect or show sign-in link
+                console.log('no user');
+                return;
+            }
+            else{
+                console.log('Signed in:', user.uid, user.email, 'role:', role);
+            }
+            });
+        </script>
+
+        <!-- <script src = "postJobClient.js"></script> !-->
+    </body>
+</html>
