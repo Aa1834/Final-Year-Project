@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Advertise Job</title>
+    </head>
+    <body>
+        <form>
+            <fieldset>
+            <label for = "jobPost">Name of Job</label>
+            <input type = "text" id = "job" name = "nameJob" placeholder = "E.g. Paint a fence">
+
+            <label for = "jobDescription">Job Description</label>
+            <textarea id="summary" name="summary" class="textarea-sm"  placeholder="Describe the scope, goals, and deliverables..."></textarea>
+
+            <label for = "jobDuration">Job Duration</label>
+            <input id = "duration" name = "timeLength">
+
+            <label for = "currency"></label>
+            <select id = "currency" name = "currency" required>
+                <option value = "GBP">GBP</option>
+                <option value = "USD">USD</option>
+            </select>
+
+            <label for = "payment">Pay</label>
+            <input id = "pay" name = "pay">
+
+            <button id = postJob>Post Job</button>
+        </fieldset>
+        </form>
+
+        <script type = "module">
+        import { getUserProfile } from './users.js';
+        getUserProfile(({ user, role, profile }) => {
+            if (!user) {
+                console.log('no user');
+                return;
+            }
+            else{
+                console.log('Signed in:', user.uid, user.email, 'role:', role);
+            }
+            });
+        </script>
+
+        <script src = postJobClient.js></script>
+    </body>
+</html>
