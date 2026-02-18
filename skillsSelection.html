@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Skills</title>
+    <style>
+        body {
+            font-family: Inter, system-ui, Segoe UI, Roboto, Arial;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .skills-section {
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .skill-label {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .skill-label.selected {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .custom-skill-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+
+        .custom-skill-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        #customSkillInput {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            font-family: inherit;
+        }
+
+        #addCustomSkill {
+            padding: 10px 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .selected-count {
+            margin: 20px 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 30px;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-save {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-clear {
+            background: #f0f0f0;
+        }
+
+        #statusMessage {
+            margin-top: 15px;
+            padding: 10px;
+            display: none;
+        }
+
+        #statusMessage.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        #statusMessage.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .loading {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <h1>Select Your Skills</h1>
+        <p class="subtitle">Choose the skills that best describe your expertise</p>
+
+        <section id="loadingMessage" class="loading">Loading your profile...</section>
+
+        <section id="skillsContent" style="display: none;">
+            <!-- Programming Languages -->
+            <section class="skills-section">
+                <h2 class="category-title">Programming Languages</h2>
+                <article class="skills-container" id="programmingSkills">
+                    <button class="skill-label" data-skill="JavaScript">JavaScript</button>
+                    <button class="skill-label" data-skill="Python">Python</button>
+                    <button class="skill-label" data-skill="Java">Java</button>
+                    <button class="skill-label" data-skill="C++">C++</button>
+                    <button class="skill-label" data-skill="C#">C#</button>
+                    <button class="skill-label" data-skill="PHP">PHP</button>
+                    <button class="skill-label" data-skill="Ruby">Ruby</button>
+                    <button class="skill-label" data-skill="Go">Go</button>
+                    <button class="skill-label" data-skill="Swift">Swift</button>
+                    <button class="skill-label" data-skill="Kotlin">Kotlin</button>
+                </article>
+            </section>
+
+            <!-- Web Development -->
+            <section class="skills-section">
+                <h2 class="category-title">Web Development</h2>
+                <article class="skills-container" id="webSkills">
+                    <button class="skill-label" data-skill="HTML/CSS">HTML/CSS</button>
+                    <button class="skill-label" data-skill="React">React</button>
+                    <button class="skill-label" data-skill="Angular">Angular</button>
+                    <button class="skill-label" data-skill="Vue.js">Vue.js</button>
+                    <button class="skill-label" data-skill="Node.js">Node.js</button>
+                    <button class="skill-label" data-skill="Express.js">Express.js</button>
+                    <button class="skill-label" data-skill="Next.js">Next.js</button>
+                    <button class="skill-label" data-skill="WordPress">WordPress</button>
+                    <button class="skill-label" data-skill="Django">Django</button>
+                    <button class="skill-label" data-skill="Flask">Flask</button>
+                </article>
+            </section>
+
+            <!-- Mobile Development -->
+            <section class="skills-section">
+                <h2 class="category-title">Mobile Development</h2>
+                <article class="skills-container" id="mobileSkills">
+                    <button class="skill-label" data-skill="React Native">React Native</button>
+                    <button class="skill-label" data-skill="Flutter">Flutter</button>
+                    <button class="skill-label" data-skill="iOS Development">iOS Development</button>
+                    <button class="skill-label" data-skill="Android Development">Android Development</button>
+                </article>
+            </section>
+
+            <!-- Database & Backend -->
+            <section class="skills-section">
+                <h2 class="category-title">Database & Backend</h2>
+                <article class="skills-container" id="databaseSkills">
+                    <button class="skill-label" data-skill="SQL">SQL</button>
+                    <button class="skill-label" data-skill="MongoDB">MongoDB</button>
+                    <button class="skill-label" data-skill="PostgreSQL">PostgreSQL</button>
+                    <button class="skill-label" data-skill="MySQL">MySQL</button>
+                    <button class="skill-label" data-skill="Firebase">Firebase</button>
+                    <button class="skill-label" data-skill="Redis">Redis</button>
+                    <button class="skill-label" data-skill="GraphQL">GraphQL</button>
+                    <button class="skill-label" data-skill="REST APIs">REST APIs</button>
+                </article>
+            </section>
+
+            <!-- Design & Creative -->
+            <section class="skills-section">
+                <h2 class="category-title">Design & Creative</h2>
+                <article class="skills-container" id="designSkills">
+                    <button class="skill-label" data-skill="UI/UX Design">UI/UX Design</button>
+                    <button class="skill-label" data-skill="Graphic Design">Graphic Design</button>
+                    <button class="skill-label" data-skill="Figma">Figma</button>
+                    <button class="skill-label" data-skill="Adobe Photoshop">Adobe Photoshop</button>
+                    <button class="skill-label" data-skill="Adobe Illustrator">Adobe Illustrator</button>
+                    <button class="skill-label" data-skill="Adobe XD">Adobe XD</button>
+                    <button class="skill-label" data-skill="Sketch">Sketch</button>
+                </article>
+            </section>
+
+            <!-- Data Science & AI -->
+            <section class="skills-section">
+                <h2 class="category-title">Data Science & AI</h2>
+                <article class="skills-container" id="dataSkills">
+                    <button class="skill-label" data-skill="Machine Learning">Machine Learning</button>
+                    <button class="skill-label" data-skill="Data Analysis">Data Analysis</button>
+                    <button class="skill-label" data-skill="TensorFlow">TensorFlow</button>
+                    <button class="skill-label" data-skill="PyTorch">PyTorch</button>
+                    <button class="skill-label" data-skill="Pandas">Pandas</button>
+                    <button class="skill-label" data-skill="NumPy">NumPy</button>
+                    <button class="skill-label" data-skill="Data Visualization">Data Visualization</button>
+                </article>
+            </section>
+
+            <!-- Other Skills -->
+            <section class="skills-section">
+                <h2 class="category-title">Other Skills</h2>
+                <article class="skills-container" id="otherSkills">
+                    <button class="skill-label" data-skill="Git">Git</button>
+                    <button class="skill-label" data-skill="Docker">Docker</button>
+                    <button class="skill-label" data-skill="AWS">AWS</button>
+                    <button class="skill-label" data-skill="Azure">Azure</button>
+                    <button class="skill-label" data-skill="DevOps">DevOps</button>
+                    <button class="skill-label" data-skill="Testing">Testing</button>
+                    <button class="skill-label" data-skill="Agile">Agile</button>
+                    <button class="skill-label" data-skill="Project Management">Project Management</button>
+                </article>
+            </section>
+
+            <!-- Custom Skills -->
+            <section class="custom-skill-section">
+                <h3>Add Custom Skill</h3>
+                <p style="color: #666; margin-bottom: 10px;">Don't see your skill? Add it here!</p>
+                <form class="custom-skill-input">
+                    <input type="text" id="customSkillInput" placeholder="Enter a custom skill...">
+                    <button type="button" id="addCustomSkill">Add</button>
+                </form>
+                <article class="skills-container" id="customSkills" style="margin-top: 15px;"></article>
+            </section>
+
+            <section class="selected-count">
+                Selected: <strong><span id="selectedCount">0</span></strong> skills
+            </section>
+
+            <nav class="action-buttons">
+                <button class="btn btn-save" id="saveSkills">Save Skills</button>
+                <button class="btn btn-clear" id="clearSkills">Clear All</button>
+                <button id = "nextPage">Move to next page</button>
+            </nav>
+
+            <aside id="statusMessage"></aside>
+        </section>
+    </main>
+
+    <script type="module" src="skillsSelection.js"></script>
+</body>
+</html>
