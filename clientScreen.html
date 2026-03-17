@@ -2,31 +2,93 @@
 <html>
     <head>
         <title>Advertise Job</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     </head>
     <body>
         <form>
             <fieldset>
+                <p>
             <label for = "jobPost">Name of Job</label>
-            <input type = "text" id = "job" name = "nameJob" placeholder = "E.g. Paint a fence">
+            <input type = "text" id = "job" name = "nameJob" placeholder = "E.g. Develop an e-commerce website">
+            </p>
 
+            <p>
             <label for = "jobDescription">Job Description</label>
-            <textarea id="summary" name="summary" class="textarea-sm"  placeholder="Describe the scope, goals, and deliverables..."></textarea>
-
+            <textarea id="summary" name="summary" class="textarea-sm" placeholder="Describe the job's scope, goals, and deliverables..."></textarea>
+            </p>
+            <p>
+            <label for = "jobCategory"></label>
+            <select id = "gigCategory" name = "categoryGig" required>
+                <option value = "">Select category of job</option>
+                <option value = "technology">Programming and Tech</option>
+                <option value = "data">Data</option>
+                <option value = "business">Business</option>
+                <option value = "consulting">Consulting</option>
+                <option value = "marketing">Marketing and Sales</option>
+                <option value = "finance">Finance and Accounting</option>
+            </select>
+            </p>
+             <p>
+            <label for = "jobType"></label>
+            <select id = "typeOfJob" name = "categoryGig" required>
+                <option value = "">Please select one</option>
+                <option value = "remote">Remote</option>
+                <option value = "inPerson">In Person</option>
+                <option value = "hybrid">Hybrid</option>
+            </select>
+            </p>
+            <p>
             <label for = "jobDuration">Job Duration</label>
-            <input id = "duration" name = "timeLength">
-
+            <!--<input id = "duration" name = "timeLength"> -->
+            <select id = "duration" name = "timeLength">
+                <option value = "">Select time unit</option>
+                <option value = "days">Days</option>
+                <option value = "weeks">Weeks</option>
+                <option value = "months">Months</option>
+                <p>Enter duration and specify the unit of time </p>
+            </select>
+            </p>
+            <p>
+                <label for = "gigDuration">Job Duration</label>
+                <input type = "number" id = "jobLength" name = "lengthOfJob" required>
+            </p>
+            <p>
             <label for = "currency"></label>
             <select id = "currency" name = "currency" required>
-                <option value = "GBP">GBP</option>
                 <option value = "USD">USD</option>
             </select>
+            </p>
+            <p>
+                <input type="radio" id="projectContract" name="contractType" value="Per Project" required>
+                <label for="projectContract">Pay per Project</label>
 
-            <label for = "payment">Pay</label>
-            <input id = "pay" name = "pay">
+                <input type="radio" id="hourlyContract" name="contractType" value="Hourly">
+                <label for="hourlyContract">Pay per hour</label>
 
-            <button id = postJob>Post Job</button>
+                <input type="radio" id="customContract" name="contractType" value="Custom Offer">
+                <label for="customContract">Custom Contract</label>
+            </p>
+            <p>
+            <label for = "payment">Job's pay</label>
+            <input type = "number" id = "pay" name = "pay" min = "0" step = "1" required>
+            <p>
+            <small>Enter value in smallest monetary unit
+                Note: Value is by default in United States Dollar($).
+            </small>
+            </p>
+            </p>
         </fieldset>
         </form>
+        <button type="button" id="postJob" onclick="myClick()">Post Job Test</button>
+        <button type="button" id="postJob" >Post Job</button>
+
+        <script>
+        // Prevent decimal input in the pay field
+        const payInput = document.querySelector('#pay');
+        payInput?.addEventListener('input', (e) => {
+          e.target.value = e.target.value.replace(/[^\d]/g, '');
+        });
+        </script>
 
         <script type = "module">
         import { getUserProfile } from './users.js';
@@ -40,7 +102,109 @@
             }
             });
         </script>
+        <script>
+          /*  console.log('postJobClient.js starting');
+import { getFirestore, doc, setDoc, serverTimestamp, getDoc, collection, addDoc } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
+import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js';
+import { getAuth } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
 
-        <script src = postJobClient.js></script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCN14GSnNLm6-pz_OuWcXwlnTxJTIgMMB4",
+  authDomain: "myfyp-3ca9f.firebaseapp.com",
+  projectId: "myfyp-3ca9f",
+  storageBucket: "myfyp-3ca9f.firebasestorage.app",
+  messagingSenderId: "484227441258",
+  appId: "1:484227441258:web:137c2c3b29dd61bb74e013",
+  measurementId: "G-H1T0SEVZKV"
+};
+
+let app;
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig);
+} else {
+  app = getApps()[0];
+}
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+async function clientPostJobForm(e){
+    e.preventDefault(); // Stop form submission
+
+    const jobName = document.querySelector('#job');
+    const jobDescription = document.querySelector('#summary');
+    const jobDuration = document.querySelector('#duration');
+    const jobPay = document.querySelector('#pay');
+    const jobCurrency = document.querySelector('#currency');
+    const contractType = document.querySelector('input[name="contractType"]:checked');
+
+    const nameOfJob = jobName?.value.trim() || '';
+    const jobDetails = jobDescription?.value.trim() || '';
+    const duration = jobDuration?.value || '';
+    const jobPayment = jobPay?.value || '';
+    const currency = jobCurrency?.value || '';
+    const contract = contractType?.value || '';
+
+    // Get current user
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+        console.log('You must be signed in to post a job.');
+        return;
+    }
+
+    try {
+        const jobId = Date.now().toString();
+        const docRef = await setDoc(doc(db,"jobs",jobId), {
+            nameOfJob,
+            jobDetails,
+            duration,
+            jobPayment,
+            currency,
+            contractType: contract,
+            clientUid: currentUser.uid,
+            clientEmail: currentUser.email,
+            postedAt: serverTimestamp()
+        });
+        console.log('Job posted successfully with ID:', docRef.id);
+        console.log('Job posted successfully!');
+        // Clear form
+        document.querySelector('form').reset();
+    } catch (writeErr) {
+        console.error('Failed to post job:', writeErr);
+        console.log('Failed to post job: ' + (writeErr?.message || writeErr));
+        return;
+    }
+}
+
+
+
+// Wait for DOM ready to guarantee the button exists
+document.addEventListener('DOMContentLoaded', () => {
+    const postJobButton = document.querySelector('#postJob');
+    console.log('postJobClient.js loaded, button found:', postJobButton);
+
+    if (postJobButton) {
+        postJobButton.addEventListener('click', (e) => {
+            console.log('Post Job button clicked');
+            clientPostJobForm(e);
+        });
+    } else {
+        console.error('Post job button not found!');
+    }
+});*/
+
+function myClick()
+{
+console.log("TEST 123");
+}
+
+
+
+
+
+
+        </script>
+
+        <script type="module" src="postJobClient.js"></script>
     </body>
 </html>

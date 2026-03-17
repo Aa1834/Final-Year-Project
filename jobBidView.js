@@ -43,8 +43,8 @@ async function fetchJobBids(){
         console.log(jobId);
         console.log(jobData);
 
-        const queryForBids = query(collection(db,"jobBids"),where("jobId","==",jobId));
-        const bids = await getDocs(queryForBids);
+        //const queryForBids = query(collection(db,"jobBids"),where("jobId","==",jobId));
+        const bids = await getDocs(collection(db, "gigs", jobId, "bids"));
 
         for (const bidDoc of bids.docs){
             const bidId = bidDoc.id;
@@ -56,7 +56,7 @@ async function fetchJobBids(){
             <p><strong>Email:</strong> ${bidData.freelancerEmail}</p>
             <p><strong>Bid:</strong> $${bidData.bidAmount}</p>
             <div><strong>Skills:</strong> ${renderSkillLabels(skills)}</div>
-            <button class="accept-bid-btn" data-jobid="${jobId}" data-bidid="${bidDoc.id}">Accept Bid</button>
+            <button data-bidid= "${bidId}" data-jobid="${jobId}">Accept Bid</button>
             </div>`;
 
             console.log("Job Bid:", bidData.freelancerEmail);
@@ -89,12 +89,10 @@ function renderSkillLabels(skills) {
     if (!skills || skills.length === 0) {
         return '<span>No skills listed</span>';
     }
-    return skills.map(skill => 
-        `<span style="display:inline-block; padding:5px 10px; margin:3px; background:#2563eb; color:white; border-radius:15px;">${skill}</span>`
-    ).join('');
+    return skills.map(skill => `<span style="display:inline-block; padding:5px 10px; margin:3px; background:#2563eb; color:white; border-radius:15px;">${skill}</span>`).join('');
 }
 
-async function acceptBid(jobId, bidId) {
+/*async function acceptBid(jobId, bidId) {
   await updateDoc(doc(db, 'gigs', jobId), {
     status: 'closed',
     acceptedBidId: bidId
@@ -104,7 +102,7 @@ async function acceptBid(jobId, bidId) {
     status: 'accepted'
   });
 
-  document.querySelectorAll('.accept-bid-btn').forEach(btn => btn.disabled = true);
+  document.querySelectorAll('.accept-bid-btn').forEach(btn => btn.disabled = true); //Disables all bid buttons
 }
 
 document.addEventListener('click', (e) => {
@@ -113,6 +111,67 @@ document.addEventListener('click', (e) => {
   const jobId = e.target.dataset.jobid;
   const bidId = e.target.dataset.bidid;
   acceptBid(jobId, bidId);
+});*/
+
+async function acceptBid(jobId, bidId) {
+  const getBidDoc = await getDoc(doc(db,"gigs",jobId,"bids",bidId));
+  const bidData = getBidDoc.data();
+
+  await updateDoc(doc(db, "gigs", jobId), {
+    status: "Occupied",
+    //acceptedBidId: bidId,
+    acceptedBid: {
+      acceptedBidId: bidId,
+      acceptedBidUserId: bidData.freelancerUid,
+      acceptedBidUserEmail: bidData.freelancerEmail,
+      acceptedBidAmount: bidData.bidAmount 
+    }
+  });
+
+  await updateDoc(doc(db, "gigs", jobId, "bids", bidId), {
+    status: "accepted"
+  });
+
+  const acceptBidButton = document.querySelector(`[data-bidid="${bidId}"]`);
+  if (acceptBidButton){
+    acceptBidButton.disabled = true;
+    
+    // Nodemailer code goes here:
+
+    /*const transporter = nodemailer.createTransport({
+      host: 'live.smtp.mailtrap.io',
+      port: 587,
+      secure: false,
+      auth: {
+        user: '1a2b3c4d5e6f7g',
+        pass: '1a2b3c4d5e6f7g',
+      }
+    });
+
+    const mailOptions = {
+      from: 'yourusername@email.com',
+      to: 'yourfriend@email.com',
+      subject: 'Sending Email using Node.js',
+      text: 'That was easy!'
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log('Error:', error);
+      } else {
+        console.log('Email sent:', info.response);
+      }
+    });*/
+
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const jobId = e.target.dataset.jobid;
+  const bidId = e.target.dataset.bidid;  // matches the data-bidid attribute on the button
+  if (jobId && bidId !== null){
+    acceptBid(jobId, bidId);
+  }  
 });
 
 //const dummyTestButton = document.querySelector("#dummyButton");

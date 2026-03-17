@@ -5,9 +5,10 @@
   "description": "A freelancer marketplace with integrated charitable donations",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "firebase emulators:start",
     "dev": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
   },
   "keywords": [
     "freelancer",
@@ -27,9 +28,11 @@
     "firebase": "^12.4.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.0",
+    "nodemailer": "^8.0.2",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
+    "jest": "^30.2.0",
     "nodemon": "^3.0.1"
   }
 }

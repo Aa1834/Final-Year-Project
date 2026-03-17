@@ -94,13 +94,12 @@ async function submitBid(job) {
   }
 
   try {
-    await addDoc(collection(db, 'jobBids'), {
-      jobId: job.id,
-      jobTitle: job.nameOfJob || '',
-      bidAmount,
-      statement,
+    await addDoc(collection(db,'gigs',job.id,'bids'), { // changed jobBids being collection to subcollection of gigs
       freelancerUid: currentUser.uid,
       freelancerEmail: currentUser.email,
+      bidAmount,
+      statement,
+      status: "pending", //added status field in jobBids subcollection where the default value of status field being "pending".
       createdAt: serverTimestamp()
     });
 
@@ -137,9 +136,6 @@ async function bidPage(){
 
 bidPage();
 
-async function getJobBidId(){
-
-}
 
 
 /*async function uploadResumeFile(){

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>View Job Bids</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    </head>
+    <body>
+        <main class="container py-4">
+            <header class="mb-4">
+                <h1 class="h3">Job Bids</h1>
+                <p id="jobMeta" class="text-muted mb-0"></p>
+            </header>
+
+            <section class="mb-3">
+                <h2 id="jobTitle" class="h5"></h2>
+                <p id="jobDetails" class="text-muted"></p>
+            </section>
+
+            <section>
+                <h3 class="h6">Bids</h3>
+                <p id="statusMessage" class="text-muted"></p>
+                <ul id="bidsList" class="list-group"></ul>
+            </section>
+
+            <footer class="mt-4">
+                <a href="homePage.html" class="btn btn-secondary">Back to Home</a>
+            </footer>
+        </main>
+
+        <script type="module" src="viewJobBids.js"></script>
+    </body>
+</html>
