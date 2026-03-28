@@ -36,17 +36,20 @@ onAuthStateChanged(auth, async function (user) {
   await renderGigsForFreelancer();
 });
 
+const filterDropdownList = document.querySelector("#job-category");
 
 async function renderGigsForFreelancer() {
-  const gigsQuery = query(collection(db, "gigs"), where("acceptedBid.acceptedBidUserId", "==", freelancerUid));
+  const gigsQuery = query(
+    collection(db, "gigs"),
+    where("acceptedBid.acceptedBidUserId", "==", freelancerUid)
+  );
+
   const gigData = await getDocs(gigsQuery);
 
   const tbody = document.querySelector("#jobsTableBody");
   const status = document.querySelector("#jobsStatus");
 
-  if (!tbody){
-    return;
-  }
+  if (!tbody) return;
 
   tbody.textContent = "";
   if (status) status.textContent = "";
@@ -56,41 +59,88 @@ async function renderGigsForFreelancer() {
     return;
   }
 
-  for (const gigDoc of gigData.docs) {
-    const gig = gigDoc.data();
+  //const filterDropdownList = document.querySelector("#job-category");
+  let filterSelection = filterDropdownList.value;
 
-    const bidSnap = await getDoc(doc(db, "gigs", gigDoc.id, "bids", gig.acceptedBid.acceptedBidId));
-    const bidCreatedAt = bidSnap.exists() && bidSnap.data().createdAt?.toDate ? bidSnap.data().createdAt.toDate().toLocaleString(): "-";
 
-    const tableRow = document.createElement("tr");
+  if (filterSelection == "all") {
 
-    const jobTitle = document.createElement("td");
-    jobTitle.textContent = gig.nameOfJob || "Unable to find job name";
+    for (const gigDoc of gigData.docs) {
+      const gig = gigDoc.data();
 
-    const payment = document.createElement("td");
-    payment.textContent = `$${gig.actualPayment ?? "-"}`;
+      const bidSnap = await getDoc(
+        doc(db, "gigs", gigDoc.id, "bids", gig.acceptedBid.acceptedBidId)
+      );
 
-    const jobDuration = document.createElement("td");
-    jobDuration.textContent = `${gig.length ?? "-"} ${gig.duration ?? ""}`.trim();
+      const bidCreatedAt =bidSnap.exists() && bidSnap.data().createdAt?.toDate? bidSnap.data().createdAt.toDate().toLocaleString(): "-";
 
-    const bidWonDate = document.createElement("td");
-    bidWonDate.textContent = bidCreatedAt;
+      const tableRow = document.createElement("tr");
 
-    const cell = document.createElement("td");
-    const fullViewButton = document.createElement("button");
-    fullViewButton.textContent = "View Job";
-    fullViewButton.type = "button";
-    fullViewButton.className = "btn btn-primary";
+      const jobTitle = document.createElement("td");
+      jobTitle.textContent = gig.nameOfJob || "Unable to find job name";
 
-    /*fullViewButton.addEventListener("click",() => {
-      window.location.href =
-    }); */
+      const payment = document.createElement("td");
+      payment.textContent = `$${gig.actualPayment ?? "-"}`;
 
-    cell.appendChild(fullViewButton);
-    tableRow.append(jobTitle, payment, jobDuration, bidWonDate,cell);
-    tbody.appendChild(tableRow);
+      const jobDuration = document.createElement("td");
+      jobDuration.textContent = `${gig.length ?? "-"} ${gig.duration ?? ""}`.trim();
+
+      const bidWonDate = document.createElement("td");
+      bidWonDate.textContent = bidCreatedAt;
+
+      const categoryOfJob = document.createElement("td");
+      categoryOfJob.textContent = gig.category || "No category";
+
+      const cell = document.createElement("td");
+      const fullViewButton = document.createElement("button");
+      fullViewButton.textContent = "View Job";
+      fullViewButton.type = "button";
+      fullViewButton.className = "btn btn-primary";
+
+      cell.appendChild(fullViewButton);
+      tableRow.append(jobTitle,payment,jobDuration,bidWonDate,categoryOfJob,cell);
+      tbody.appendChild(tableRow);
+    }
+
+  } else {
+    for (const gigDoc of gigData.docs) {
+      const gig = gigDoc.data();
+
+      if (gig.category === filterSelection) {
+
+        const bidSnap = await getDoc(doc(db, "gigs", gigDoc.id, "bids", gig.acceptedBid.acceptedBidId));
+
+        const bidCreatedAt =bidSnap.exists() && bidSnap.data().createdAt?.toDate? bidSnap.data().createdAt.toDate().toLocaleString(): "-";
+
+        const tableRow = document.createElement("tr");
+
+        const jobTitle = document.createElement("td");
+        jobTitle.textContent = gig.nameOfJob || "Unable to find job name";
+
+        const payment = document.createElement("td");
+        payment.textContent = `$${gig.actualPayment ?? "-"}`;
+
+        const jobDuration = document.createElement("td");
+        jobDuration.textContent = `${gig.length ?? "-"} ${gig.duration ?? ""}`.trim();
+
+        const bidWonDate = document.createElement("td");
+        bidWonDate.textContent = bidCreatedAt;
+
+        const categoryOfJob = document.createElement("td");
+        categoryOfJob.textContent = gig.category || "No category";
+
+        const cell = document.createElement("td");
+        const fullViewButton = document.createElement("button");
+        fullViewButton.textContent = "View Job";
+        fullViewButton.type = "button";
+        fullViewButton.className = "btn btn-primary";
+
+        cell.appendChild(fullViewButton);
+        tableRow.append(jobTitle, payment, jobDuration, bidWonDate,categoryOfJob, cell);
+        tbody.appendChild(tableRow);
+      }
+    }
   }
 }
 
-
-
+filterDropdownList.addEventListener("change", renderGigsForFreelancer);
