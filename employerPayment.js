@@ -19,11 +19,8 @@ let app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const functions = getFunctions(app);
+const stripe = Stripe("pk_test_51TIxP6PzQAEXO70IcsiBE9mDQ5nr9pjftRqhsBB2yCgmoafz22OBggEBKTrW1NiCIjRShm3sC3i9lnP3jmyTZxzq00qB2IhtCK");
 //connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-
-
-
-//const stripePromise = loadStripe("your_publishable_key");
 
 
 let clientId = "";
@@ -66,7 +63,7 @@ async function displayJobs(){
         payButton.className = "btn btn-primary";
         payButton.name = job.id;
 
-        payButton.addEventListener("click", async () => {
+        /*payButton.addEventListener("click", async () => {
           try {
             const pay = httpsCallable(functions, "directEmployerToPay");
             const result = await pay({ jobId: job.id }); // send Firestore doc id
@@ -74,7 +71,57 @@ async function displayJobs(){
           } catch (err) {
             console.error("Callable error:", err);
           }
+        });*/
+
+        const pay = httpsCallable(functions,"directEmployerToPay");
+        payButton.addEventListener("click", async () => {
+          payButton.disabled = true;
+          try {
+            const result = await pay({ jobId: job.id });
+            const sessionId = result?.data?.id;
+            console.log(sessionId);
+            if (!sessionId) {
+              throw new Error("No Stripe session id returned from the function.");
+            }
+            const { error } = await stripe.redirectToCheckout({ sessionId: sessionId });
+            if (error) {
+              throw error;
+            }
+          } catch (err) {
+            console.error("Checkout failed:", err);
+            alert(err?.message || "Unable to start checkout.");
+          } finally {
+            payButton.disabled = false;
+          }
         });
+
+
+        /*payButton.addEventListener("click", async () => {
+          payButton.disabled = true;
+          try {
+            const pay = httpsCallable(functions, "directEmployerToPay");
+            const result = await pay({jobId: job.id});
+            const sessionId = result?.data?.id;
+
+            if (!sessionId) {
+              throw new Error("No checkout session id was returned by directEmployerToPay.");
+            }
+
+            if (!stripe) {
+              throw new Error("Stripe failed to initialize.");
+            }
+
+            const {error} = await stripe.redirectToCheckout({sessionId});
+            if (error) {
+              throw error;
+            }
+          } catch (err) {
+            console.error("Checkout failed:", err);
+            alert("Unable to start checkout. Please try again.");
+          } finally {
+            payButton.disabled = false;
+          }
+        });*/
 
         const payLink = document.createElement("a");
         payLink.href="./employerPayment.html?id=" + job.id;
