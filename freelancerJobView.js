@@ -39,10 +39,7 @@ onAuthStateChanged(auth, async function (user) {
 const filterDropdownList = document.querySelector("#job-category");
 
 async function renderGigsForFreelancer() {
-  const gigsQuery = query(
-    collection(db, "gigs"),
-    where("acceptedBid.acceptedBidUserId", "==", freelancerUid)
-  );
+  const gigsQuery = query(collection(db, "gigs"), where("acceptedBid.acceptedBidUserId", "==", freelancerUid));
 
   const gigData = await getDocs(gigsQuery);
 
@@ -62,15 +59,14 @@ async function renderGigsForFreelancer() {
   //const filterDropdownList = document.querySelector("#job-category");
   let filterSelection = filterDropdownList.value;
 
+  //console.debug('****'+ filterSelection);
 
   if (filterSelection == "all") {
 
     for (const gigDoc of gigData.docs) {
       const gig = gigDoc.data();
 
-      const bidSnap = await getDoc(
-        doc(db, "gigs", gigDoc.id, "bids", gig.acceptedBid.acceptedBidId)
-      );
+      const bidSnap = await getDoc(doc(db, "gigs", gigDoc.id, "bids", gig.acceptedBid.acceptedBidId));
 
       const bidCreatedAt =bidSnap.exists() && bidSnap.data().createdAt?.toDate? bidSnap.data().createdAt.toDate().toLocaleString(): "-";
 
@@ -92,12 +88,20 @@ async function renderGigsForFreelancer() {
       categoryOfJob.textContent = gig.category || "No category";
 
       const cell = document.createElement("td");
-      const fullViewButton = document.createElement("button");
-      fullViewButton.textContent = "View Job";
-      fullViewButton.type = "button";
-      fullViewButton.className = "btn btn-primary";
+      //const fullViewButton = document.createElement("button");
+      const fullViewLink = document.createElement("a");
+    
+      fullViewLink.href="./individual_job_view_freelancer.html?id=" + gigDoc.id;
+      fullViewLink.textContent='Go to the job';
+      cell.appendChild(fullViewLink);
+      
 
-      cell.appendChild(fullViewButton);
+
+      //fullViewButton.textContent = "View Job";
+      //fullViewButton.type = "button";
+      //fullViewButton.className = "btn btn-primary";
+
+      //cell.appendChild(fullViewButton);
       tableRow.append(jobTitle,payment,jobDuration,bidWonDate,categoryOfJob,cell);
       tbody.appendChild(tableRow);
     }
@@ -106,7 +110,7 @@ async function renderGigsForFreelancer() {
     for (const gigDoc of gigData.docs) {
       const gig = gigDoc.data();
 
-      if (gig.category === filterSelection) {
+      if (gig.category == filterSelection) {
 
         const bidSnap = await getDoc(doc(db, "gigs", gigDoc.id, "bids", gig.acceptedBid.acceptedBidId));
 
@@ -130,12 +134,21 @@ async function renderGigsForFreelancer() {
         categoryOfJob.textContent = gig.category || "No category";
 
         const cell = document.createElement("td");
-        const fullViewButton = document.createElement("button");
-        fullViewButton.textContent = "View Job";
-        fullViewButton.type = "button";
-        fullViewButton.className = "btn btn-primary";
 
-        cell.appendChild(fullViewButton);
+
+        //const fullViewButton = document.createElement("button");
+        //fullViewButton.textContent = "View Job";
+        //fullViewButton.type = "button";
+        //fullViewButton.className = "btn btn-primary";
+
+
+        const fullViewLink = document.createElement("a");
+        fullViewLink.href="./individual_job_view_freelancer.html?id=" + gigDoc.id;
+        fullViewLink.textContent='Go to the job';
+        cell.appendChild(fullViewLink);
+
+
+        //cell.appendChild(fullViewButton);
         tableRow.append(jobTitle, payment, jobDuration, bidWonDate,categoryOfJob, cell);
         tbody.appendChild(tableRow);
       }
