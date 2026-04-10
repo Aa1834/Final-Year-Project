@@ -100,45 +100,60 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const jobs = [];
-export async function retrieveJobs(){
-    const querySnapshot = await getDocs(collection(db,"gigs")); // retrieves the documents in gigs collection
-    const container = document.querySelector('#cardsContainer'); // accesses the card container in displayJobsTest.html
-    let html = '';
-    querySnapshot.forEach((doc) => {
-        const fields=doc.data();
-        /*html +=`<my-card 
-            job-title="${fields.nameOfJob}" 
-            job-desc="${fields.jobDetails}"
-            job-duration="${fields.length} ${fields.duration}"
-            job-payment="${fields.actualPayment}"
-            job-contract="${fields.contractType}">
-        </my-card>`; */
 
-        html+=`<div class = "card-body card">
-                <div class = "row">
-               
-                    <h4 class="card-title">${fields.nameOfJob}</h4>
-                    <p id ="job-description">Job Description: ${fields.jobDetails}</p>
-                    <p id = "job-length">Duration: ${fields.length} ${fields.duration}</p>
-                    <p id = "job-base-payment">Base Payment: $${fields.actualPayment}</p>
-                    <p id = "job-contract-type">Contract Type: ${fields.contractType}</p>
-                    <a href="jobBidPage.html?jobId=${doc.id}" class="btn btn-primary">Place Bid</a>
-            </div>
-        </div>`;
+export async function retrieveJobs() {
+  const fetchGigs = await getDocs(collection(db, "gigs"));
+  const container = document.querySelector("#cardsContainer");
 
-        console.log(doc.id, " => ", doc.data());
-        jobs.push({
-            title: fields.nameOfJob,
-            description: fields.jobDetails,
-            contract:fields.contractType,
-            category:fields.category,
-            arrangement: fields.jobArrangements,
-            durationText:`${fields.length} ${fields.duration}`,
-            payment:`$ ${fields.actualPayment}`
-        });
-    });
-    container.innerHTML = html;
-    console.log(jobs);
+  if (!container){
     return jobs;
+  }
+
+  let html = "";
+  jobs.length = 0;
+
+  for (const jobDoc of fetchGigs.docs) {
+    const jobData = jobDoc.data();
+
+    html += `<div class="card-body card">
+              <div class="row">
+                <h4 class="card-title">${jobData.nameOfJob || "Untitled Job"}</h4>
+                <p id="job-description">Job Description: ${jobData.jobDetails || "-"}</p>
+                <p id="job-length">Duration: ${jobData.length || "-"} ${jobData.duration || ""}</p>
+                <p id="job-base-payment">Base Payment: $${jobData.actualPayment ?? "-"}</p>
+                <p id="job-contract-type">Contract Type: ${jobData.contractType || "-"}</p>
+                <a href="jobBidPage.html?jobId=${jobDoc.id}" class="btn btn-primary">Place Bid</a>
+              </div>
+            </div>`;
+
+    jobs.push({
+      title: jobData.nameOfJob,
+      description: jobData.jobDetails,
+      contract: jobData.contractType,
+      category: jobData.category,
+      arrangement: jobData.jobArrangements,
+      durationText: `${jobData.length} ${jobData.duration}`,
+      payment: `$ ${jobData.actualPayment}`
+    });
+  }
+
+  const errorMessage =  "<p>No jobs found.</p>"
+  container.innerHTML = html || errorMessage;
+  return jobs;
 }
 
+
+
+
+
+
+// hideJobs is a function to prevent other freelancers from making bids for a job that already has an assigned freelancer
+/*async function hideJobs(){
+    const gigRef = await getDoc(collection(db,"gigs")) 
+}*/
+
+
+// hideJobs is a function to prevent other freelancers from making bids for a job that already has an assigned freelancer
+/*async function hideJobs(){
+    const gigRef = await getDoc(collection(db,"gigs")) 
+}*/
