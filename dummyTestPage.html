@@ -1,11 +1,42 @@
 <!DOCTYPE html>
 <html>
     <head>
-
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     </head>
     <body>
-        <div id="cardsContainer" class="grid"></div>
+        <header>
+            <h2>Received Bids</h2>
+            <style>
+            header {
+                padding: 16px 3%;
+            }
+
+            header h2 {
+                margin: 0;
+                line-height: 1.2;
+            }
+  </style>
+        </header>
+        <main>
+            <table class="table table-bordered" style="margin:3%;">
+                <thead>
+                    <tr>
+                        <th>Job Name</th>
+                        <th>Freelancer Email</th>
+                        <th>Bid Value</th>
+                        <th>Skills</th>
+                        <th>Bid Status</th>
+                        <th>Job Status</th>
+                        <th>Donate</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id = "bidsTableBody"></tbody>
+            </table>
+        
+        <!--<div id="cardsContainer" class="grid"></div>-->
         <!--<button id = "dummyButton">Click here to test</button> -->
+        </main>
         <script type="module" src = "jobBidView.js"></script>
     </body>
 </html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <main>
+            <form id = "advertisingForm" class = "max-w-lg mx-auto p-6 bg-white rounded-xl shadow-md space-y-4">
+                <fieldset>
+                    <div>
+                        <label for = "fullName">Enter your full name</label>
+                        <input type ="text" id = "fullName" placeholder = "John Smith" required>
+                    </div>
+
+                    <div>
+                        <label for ="service">What service are you providing?</label>
+                        <input type = "text" id = "service" placeholder = "web development" required>
+                    </div>
+
+                    <div>
+                        <label for = "imageUpload"></label>
+                        <input type="file" id="imageUpload" name="imageUpload" accept=".jpeg, .jpg, .png, .svg">
+                        <!--<button id ="uploadImage" type = "button">Upload your image</button> -->
+                    </div>
+
+                    <div>
+                        <label for = "introduction">About yourself</label>
+                        <textarea id="introduction" rows="4" placeholder="Tell employers about yourself" required></textarea>
+                    </div>
+
+                    <div>
+                        <label for = "serviceFee">Fee</label>
+                        <input type = "number" min = 1 id = "serviceFee" required>
+                    </div>
+
+                    <div>
+                        <label for = "donation">Charity Donation(%)</label>
+                        <input type = "number" id = "donation" min = 1 max = 100 step = 1 required>
+                    </div>
+
+                    <div>
+                        <button type = "submit" id = "postService">Post</button>
+                    </div>
+                </fieldset>
+            </form>
+            <button id = "moveNext">Next Page</button>
+        </main>
+        <script type = "module" src = "./freelancerAdvertising.js"></script>
+    </body>
+</html>

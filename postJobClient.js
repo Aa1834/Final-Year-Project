@@ -1,8 +1,10 @@
 //version 1.0
 console.log('TESTING TESTING postJobClient.js starting');
-import { getFirestore, doc, setDoc, serverTimestamp, getDoc, collection, addDoc, getDocs } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
+import { query, where, getFirestore, doc, setDoc, serverTimestamp, getDoc, collection, addDoc, getDocs,onSnapshot } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
+
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCN14GSnNLm6-pz_OuWcXwlnTxJTIgMMB4",
@@ -23,6 +25,11 @@ if (!getApps().length) {
 
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+
+/*onSnapshot(collection(db,"gigs"),(snapshot)=>{
+    console.log(snapshot.docs);
+});*/
 
 async function clientPostJobForm(e){
     e.preventDefault(); // Stop form submission
@@ -47,7 +54,7 @@ async function clientPostJobForm(e){
     const contract = contractType?.value || '';
     const jobArrangements = jobType?.value || '';
 
-    const actualPayment = jobPayment/1000;
+    const actualPayment = jobPayment/100;
 
     // Get current user
     const currentUser = auth.currentUser;
@@ -70,6 +77,7 @@ async function clientPostJobForm(e){
             contractType: contract,
             clientUid: currentUser.uid,
             clientEmail: currentUser.email,
+            status: "Vacant",
             postedAt: serverTimestamp()
         });
         console.log('Job posted successfully with ID:', docRef.id);
@@ -101,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const jobs = [];
 
-export async function retrieveJobs() {
+/*export async function retrieveJobs() {
   const fetchGigs = await getDocs(collection(db, "gigs"));
   const container = document.querySelector("#cardsContainer");
 
@@ -140,6 +148,48 @@ export async function retrieveJobs() {
   const errorMessage =  "<p>No jobs found.</p>"
   container.innerHTML = html || errorMessage;
   return jobs;
+}*/
+
+export async function retrieveJobs() {
+  //const fetchGigs = await getDocs(collection(db, "gigs"));
+  const container = document.querySelector("#cardsContainer");
+
+  if (!container){
+    return jobs;
+  }
+
+  const queryFreeJobs = query(collection(db,"gigs"),where("status","==","Vacant"));
+
+
+  onSnapshot(queryFreeJobs,(snapshot)=>{
+    let html = "";
+    for (const jobDoc of snapshot.docs) {
+        const jobData = jobDoc.data();
+
+        html += `<div class="card-body card">
+                <div class="row">
+                    <h4 class="card-title">${jobData.nameOfJob || "Untitled Job"}</h4>
+                    <p id="job-length">Duration: ${jobData.length || "-"} ${jobData.duration || ""}</p>
+                    <p id="job-base-payment">Base Payment: $${jobData.actualPayment ?? "-"}</p>
+                    <p id="job-contract-type">Contract Type: ${jobData.contractType || "-"}</p>
+                    <a href="jobBidPage.html?jobId=${jobDoc.id}" class="btn btn-primary">Place Bid</a>
+                </div>
+                </div>`;
+
+        jobs.push({
+        title: jobData.nameOfJob,
+        description: jobData.jobDetails,
+        contract: jobData.contractType,
+        category: jobData.category,
+        arrangement: jobData.jobArrangements,
+        durationText: `${jobData.length} ${jobData.duration}`,
+        payment: `$ ${jobData.actualPayment}`
+        });
+    }
+    const errorMessage =  "<p>No jobs found.</p>"
+    container.innerHTML = html || errorMessage;
+    return jobs;
+});
 }
 
 

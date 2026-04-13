@@ -33,6 +33,7 @@ const bidForm = document.querySelector('#bidForm');
 const bidStatus = document.querySelector('#bidStatus');
 const bidAmountInput = document.querySelector('#bidAmount');
 const bidStatementInput = document.querySelector('#bidStatement');
+const donationAmount = document.querySelector('#charityDonation');
 
 
 function getJobId(){
@@ -81,9 +82,10 @@ async function submitBid(job) {
 
   const bidAmount = Number(bidAmountInput?.value || 0);
   const statement = bidStatementInput?.value?.trim() || '';
+  const donation = Number(donationAmount?.value || 1);
 
-  if (!bidAmount || bidAmount <= 0 || !statement) {
-    setStatus('Please enter a valid bid amount and statement.');
+  if (!bidAmount || bidAmount <= 0 || !statement || donation > 100 || donation < 1 || !donation) {
+    setStatus('Please enter an acceptable bid amount,donation amount and/or statement.');
     return;
   }
 
@@ -99,12 +101,15 @@ async function submitBid(job) {
       freelancerEmail: currentUser.email,
       bidAmount,
       statement,
+      donation,
       status: "pending", //added status field in jobBids subcollection where the default value of status field being "pending".
       createdAt: serverTimestamp()
     });
 
     setStatus('Bid submitted successfully.');
-    if (bidForm) bidForm.reset();
+    if (bidForm){
+      bidForm.reset();
+    }
   } catch (err) {
     console.error('Failed to submit bid:', err);
     setStatus('Failed to submit bid. Please try again.');
